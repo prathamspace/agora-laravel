@@ -8,3 +8,6 @@ Route::get('/', function () {
 Route::get('/chat', function () {
     return view('chat'); // Assuming your Blade view is named chat.blade.php
 });
+Route::get('/voice', function () {
+    return view('voice'); // Assuming your Blade view is named chat.blade.php
+});
