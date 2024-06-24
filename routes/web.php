@@ -11,3 +11,6 @@ Route::get('/chat', function () {
 Route::get('/voice', function () {
     return view('voice'); // Assuming your Blade view is named chat.blade.php
 });
+Route::get('/video', function () {
+    return view('video');
+});
