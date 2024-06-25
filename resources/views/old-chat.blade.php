@@ -1,16 +1,13 @@
-<!-- resources/views/chat.blade.php -->
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <title>Agora Chat Examples</title>
+    <!-- <script type="module" src="/main.js"></script> -->
+    <!-- <link rel="stylesheet" href="style.css" type="text/css" /> -->
 
-    <!-- Import Vite compiled JavaScript -->
     @vite('resources/js/chat.js')
-
-    <!-- Optional: Add stylesheets or other scripts -->
 </head>
 
 <body>
@@ -35,18 +32,13 @@
         <div class="input-field">
             <label>Peer Message</label>
             <input type="text" placeholder="Peer message" id="peerMessage">
-            <button type="button" id="send_peer_message">Send</button>
-        </div>
-        <div>
-            <!-- UI elements for starting calls -->
-            <button type="button" onclick="startVideoCall()">Start Video Call</button>
-            <button type="button" onclick="startAudioCall()">Start Audio Call</button>
+            <button type="button" id="send_peer_message">send</button>
         </div>
     </form>
     <hr />
     <div id="log"></div>
 
-    <!-- Optional: Add more UI elements or scripts as needed -->
+
 </body>
 
 </html>

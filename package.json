@@ -16,6 +16,7 @@
     },
     "dependencies": {
         "agora-chat": "^1.2.2-2",
-        "agora-rtc-sdk-ng": "^4.21.0"
+        "agora-rtc-sdk-ng": "^4.21.0",
+        "chat-callkit": "^1.2.0"
     }
 }

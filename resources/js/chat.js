@@ -1,11 +1,18 @@
-import AC from "agora-chat";
+// resources/js/chat.js
 
-// Replace <Your app key> with your app key
-const appKey = "411165619#1353321";
+import AgoraRTC from "agora-rtc-sdk-ng";
+import AC from "agora-chat"; // Import Agora Chat SDK
+
+// Replace <Your Agora App ID> with your actual Agora App ID
+const YOUR_AGORA_APP_ID = "411165619#1353321";
+
+// Initialize Agora RTC client
+const rtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+
+// Initialize Agora Chat connection
 const conn = new AC.connection({
-    appKey: appKey,
+    appKey: YOUR_AGORA_APP_ID,
 });
-
 conn.addEventHandler("connection&message", {
     onConnected: () => {
         document
@@ -97,3 +104,51 @@ window.onload = function () {
             });
     };
 };
+
+// Function to start a video call
+async function startVideoCall() {
+    console.log("tessst");
+    try {
+        const userId = document.getElementById("userID").value.toString();
+        const token = document.getElementById("token").value.toString();
+
+        // Join RTC channel
+        await rtcClient.join(YOUR_AGORA_APP_ID, "video_channel", token, userId);
+
+        // Create local audio and video tracks
+        const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        const localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+
+        // Publish local tracks to the RTC channel
+        await rtcClient.publish([localAudioTrack, localVideoTrack]);
+
+        console.log("Video call started successfully!");
+    } catch (error) {
+        console.error("Failed to start video call:", error);
+    }
+}
+
+// Function to start an audio call
+async function startAudioCall() {
+    try {
+        const userId = document.getElementById("userID").value.toString();
+        const token = document.getElementById("token").value.toString();
+        console.log(`boom user ${userId} token ${token}`);
+        // Join RTC channel
+        await rtcClient.join(YOUR_AGORA_APP_ID, "audio_channel", token, userId);
+
+        // Create local audio track
+        const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+
+        // Publish local audio track to the RTC channel
+        await rtcClient.publish([localAudioTrack]);
+
+        console.log("Audio call started successfully!");
+    } catch (error) {
+        console.error("Failed to start audio call:", error);
+    }
+}
+
+// Expose functions for use in the HTML
+window.startVideoCall = startVideoCall;
+window.startAudioCall = startAudioCall;
