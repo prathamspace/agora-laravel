@@ -4,8 +4,42 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7e8c3c14ff33b199b4a0838993eb8423",
+    "content-hash": "19ce07ca4f8d375a63848244212d7967",
     "packages": [
+        {
+            "name": "boogiefromzk/agora-token",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/boogiefromzk/agora-token-php.git",
+                "reference": "70ba634c1b1a5d5d61fb5fdabe56ddc0dc996169"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/boogiefromzk/agora-token-php/zipball/70ba634c1b1a5d5d61fb5fdabe56ddc0dc996169",
+                "reference": "70ba634c1b1a5d5d61fb5fdabe56ddc0dc996169",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "BoogieFromZk\\AgoraToken\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "ISC"
+            ],
+            "description": "Intended to make Agora Tools for PHP repository folder as a package installable with Composer.",
+            "support": {
+                "issues": "https://github.com/boogiefromzk/agora-token-php/issues",
+                "source": "https://github.com/boogiefromzk/agora-token-php/tree/v1.0.1"
+            },
+            "time": "2023-03-04T12:01:54+00:00"
+        },
         {
             "name": "brick/math",
             "version": "0.12.1",
@@ -7819,7 +7853,7 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": [],
     "prefer-stable": true,
     "prefer-lowest": false,

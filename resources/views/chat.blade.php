@@ -6,11 +6,17 @@
 <head>
     <meta charset="UTF-8">
     <title>Agora Chat Examples</title>
-
+    <!-- CSRF Token -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Import Vite compiled JavaScript -->
     @vite('resources/js/chat.js')
 
     <!-- Optional: Add stylesheets or other scripts -->
+    <style>
+        #leave {
+            display: none;
+        }
+    </style>
 </head>
 
 <body>
@@ -40,6 +46,7 @@
         <div>
             <!-- UI elements for starting calls -->
             <button type="button" onclick="startVideoCall()">Start Video Call</button>
+            <button type="button" id="leave">LEAVE</button>
             <button type="button" onclick="startAudioCall()">Start Audio Call</button>
         </div>
     </form>

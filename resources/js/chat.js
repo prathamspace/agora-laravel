@@ -1,5 +1,3 @@
-// resources/js/chat.js
-
 import AgoraRTC from "agora-rtc-sdk-ng";
 import AC from "agora-chat"; // Import Agora Chat SDK
 
@@ -7,12 +5,23 @@ import AC from "agora-chat"; // Import Agora Chat SDK
 const YOUR_AGORA_APP_ID = "411165619#1353321";
 
 // Initialize Agora RTC client
-const rtcClient = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+const rtcClient = AgoraRTC.createClient({
+    mode: "rtc",
+    codec: "vp8",
+});
 
 // Initialize Agora Chat connection
 const conn = new AC.connection({
     appKey: YOUR_AGORA_APP_ID,
 });
+
+let rtc = {
+    localAudioTrack: null,
+    localVideoTrack: null,
+    client: null, // Make sure this is initialized properly if used
+};
+
+// Event handlers for Agora Chat
 conn.addEventHandler("connection&message", {
     onConnected: () => {
         document
@@ -52,7 +61,138 @@ conn.addEventHandler("connection&message", {
     },
 });
 
+async function generateToken(channelName) {
+    try {
+        const response = await fetch(
+            `http://127.0.0.1:8000/services/sample/RtcTokenBuilderSample.php?channelName=${channelName}`
+        );
+        if (!response.ok) {
+            throw new Error("Failed to fetch token");
+        }
+        const data = await response.json();
+        return data.token;
+    } catch (error) {
+        console.error("Error fetching Agora token:", error);
+        return null; // Handle error gracefully in your application
+    }
+}
+
+function generateRandomChannelName() {
+    const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    const length = 8; // Adjust the length of the channel name as needed
+    let channelName = "";
+
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        channelName += characters.charAt(randomIndex);
+    }
+
+    return channelName;
+}
+
+const randomChannel = generateRandomChannelName();
+
+async function startVideoCall() {
+    try {
+        const userId = document.getElementById("userID").value.toString();
+        const tempToken = await generateToken(randomChannel); // Use randomChannel here
+
+        if (!tempToken) {
+            throw new Error("Failed to generate token");
+        }
+
+        await rtcClient.join(
+            YOUR_AGORA_APP_ID,
+            randomChannel,
+            tempToken,
+            userId
+        );
+
+        const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        const localVideoTrack = await AgoraRTC.createCameraVideoTrack();
+
+        await rtcClient.publish([localAudioTrack, localVideoTrack]);
+
+        console.log("Video call started successfully!");
+        console.log("Channel Name:", randomChannel);
+        console.log("Temporary Token:", tempToken);
+
+        // Display local video feed
+        const localPlayerContainer = document.createElement("div");
+        localPlayerContainer.id = "local-player"; // Set an ID for the container
+        localPlayerContainer.style.width = "640px";
+        localPlayerContainer.style.height = "480px";
+        document.body.append(localPlayerContainer);
+
+        // Play local video track in the container
+        localVideoTrack.play(localPlayerContainer);
+
+        // Show the leave button
+        document.getElementById("leave").style.display = "inline-block";
+
+        // Set rtc object properties
+        rtc.localAudioTrack = localAudioTrack;
+        rtc.localVideoTrack = localVideoTrack;
+        rtc.client = rtcClient;
+
+        console.log("Local video displayed successfully!");
+    } catch (error) {
+        console.error("Failed to start video call:", error);
+    }
+}
+
+document.getElementById("leave").onclick = async function () {
+    try {
+        await rtcClient.unpublish([rtc.localAudioTrack, rtc.localVideoTrack]);
+        rtc.localAudioTrack.close();
+        rtc.localVideoTrack.close();
+        rtcClient.remoteUsers.forEach((user) => {
+            const playerContainer = document.getElementById(user.uid);
+            playerContainer && playerContainer.remove();
+        });
+        await rtcClient.leave();
+
+        console.log("Left channel successfully");
+        document.getElementById("leave").style.display = "none";
+    } catch (error) {
+        console.error("Leave channel error:", error);
+    }
+};
+
+// Function to start an audio call
+async function startAudioCall() {
+    try {
+        const userId = document.getElementById("userID").value.toString();
+        const tempToken = await generateToken(randomChannel); // Use randomChannel here
+        if (!tempToken) {
+            throw new Error("Failed to generate token");
+        }
+
+        await rtcClient.join(
+            YOUR_AGORA_APP_ID,
+            randomChannel,
+            tempToken,
+            userId
+        );
+
+        const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+        await rtcClient.publish([localAudioTrack]);
+
+        console.log("Audio call started successfully!");
+        console.log("Channel Name:", "testing");
+        console.log("Temporary Token:", tempToken);
+    } catch (error) {
+        console.error("Failed to start audio call:", error);
+    }
+}
+
+// Expose functions for use in the HTML
+window.startVideoCall = startVideoCall;
+window.startAudioCall = startAudioCall;
+
 window.onload = function () {
+    // Login function
     document.getElementById("login").onclick = function () {
         document
             .getElementById("log")
@@ -66,6 +206,7 @@ window.onload = function () {
         });
     };
 
+    // Logout function
     document.getElementById("logout").onclick = function () {
         conn.close();
         document
@@ -74,6 +215,7 @@ window.onload = function () {
             .append("logout");
     };
 
+    // Send peer message function
     document.getElementById("send_peer_message").onclick = function () {
         let peerId = document.getElementById("peerId").value.toString();
         let peerMessage = document
@@ -104,51 +246,3 @@ window.onload = function () {
             });
     };
 };
-
-// Function to start a video call
-async function startVideoCall() {
-    console.log("tessst");
-    try {
-        const userId = document.getElementById("userID").value.toString();
-        const token = document.getElementById("token").value.toString();
-
-        // Join RTC channel
-        await rtcClient.join(YOUR_AGORA_APP_ID, "video_channel", token, userId);
-
-        // Create local audio and video tracks
-        const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-        const localVideoTrack = await AgoraRTC.createCameraVideoTrack();
-
-        // Publish local tracks to the RTC channel
-        await rtcClient.publish([localAudioTrack, localVideoTrack]);
-
-        console.log("Video call started successfully!");
-    } catch (error) {
-        console.error("Failed to start video call:", error);
-    }
-}
-
-// Function to start an audio call
-async function startAudioCall() {
-    try {
-        const userId = document.getElementById("userID").value.toString();
-        const token = document.getElementById("token").value.toString();
-        console.log(`boom user ${userId} token ${token}`);
-        // Join RTC channel
-        await rtcClient.join(YOUR_AGORA_APP_ID, "audio_channel", token, userId);
-
-        // Create local audio track
-        const localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-
-        // Publish local audio track to the RTC channel
-        await rtcClient.publish([localAudioTrack]);
-
-        console.log("Audio call started successfully!");
-    } catch (error) {
-        console.error("Failed to start audio call:", error);
-    }
-}
-
-// Expose functions for use in the HTML
-window.startVideoCall = startVideoCall;
-window.startAudioCall = startAudioCall;

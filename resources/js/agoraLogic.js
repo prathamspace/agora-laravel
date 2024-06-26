@@ -7,8 +7,8 @@ let rtc = {
 
 let options = {
     appId: "b7ed4aa935ed4317942a13b338067854", // Replace with your Agora App ID
-    channel: "abgjlkgzsd", // Replace with your channel name
-    token: "007eJxTYPh738NO95+NxEcT3vt+h1pYgz/G5Upb7733R+Hngweehm0KDEnmqSkmiYmWxqZA2tjQ3NLEKNHQOMnY2MLAzNzC1KQyoTKtIZCRQXWzNDMjAwSC+FwMiUnpWTnZ6VXFKQwMACivIVc=", // Replace with your temporary token
+    channel: "test", // Replace with your channel name
+    token: "006b7ed4aa935ed4317942a13b338067854IABiCwgwGjOHfcrsbVhEPRkXT5xrPTUT2vhiO0K77+EDtwx+f9gAAAAAIgDwqwAAdFl9ZgQAAQAEFnxmAwAEFnxmAgAEFnxmBAAEFnxm", // Replace with your temporary token
 
     uid: null,
 };

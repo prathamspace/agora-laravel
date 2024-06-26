@@ -23,4 +23,10 @@ export default defineConfig({
             },
         },
     },
+    define: {
+        global: "window", // Ensures `global.Buffer` points to `window.Buffer` in browser context
+    },
+    optimizeDeps: {
+        include: ["buffer"], // Ensure buffer is included in optimized dependencies
+    },
 });

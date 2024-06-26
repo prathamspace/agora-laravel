@@ -1,10 +1,11 @@
 <?php
 
 
+
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AgoraController;
-use Illuminate\Support\Facades\Response;
-use Agora\RtcTokenBuilder;
+use Illuminate\Http\Request;
+use App\Http\Controllers\AgoraTokenController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -21,24 +22,9 @@ Route::get('/video', function () {
 Route::get('/call', function () {
     return view('call');
 });
-
-
-
-Route::get('/generate-token', function () {
-    $appID = "YOUR_APP_ID";
-    $appCertificate = "YOUR_APP_CERTIFICATE";
-    $channelName = "test";
-    $uid = 0;
-    $userAccount = "user_account";
-    $role = RtcTokenBuilder::RoleAttendee;
-    $expireTimeInSeconds = 3600;
-    $currentTimestamp = (new DateTime("now", new DateTimeZone('UTC')))->getTimestamp();
-    $privilegeExpireTs = $currentTimestamp + $expireTimeInSeconds;
-
-    $token = RtcTokenBuilder::buildTokenWithUid($appID, $appCertificate, $channelName, $uid, $role, $privilegeExpireTs);
-    return Response::json(['token' => $token]);
+Route::get('/app', function () {
+    return view('app');
 });
 
-Route::get('/init-chatkit', [AgoraController::class, 'initChatKit']);
-Route::post('/start-call', [AgoraController::class, 'startCall']);
-Route::post('/answer-call', [AgoraController::class, 'answerCall']);
+
+Route::get('/generate-agora-token/{channelName}', [AgoraTokenController::class, 'generateToken']);
